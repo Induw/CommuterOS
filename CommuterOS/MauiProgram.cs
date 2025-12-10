@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommuterOS.Services;
+using Microsoft.Extensions.Logging;
 
 namespace CommuterOS;
 
@@ -13,7 +14,10 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("VT323-Regular.ttf", "RetroFont");
 			});
+
+		builder.Services.AddSingleton<ResRobotService>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
