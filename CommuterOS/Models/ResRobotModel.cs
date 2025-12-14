@@ -34,7 +34,7 @@ public class LegList
 public class Leg
 {
     [JsonPropertyName("name")]
-    public required string ?Name { get; set; }
+    public required string Name { get; set; }
 
     [JsonPropertyName("Origin")]
     public required Point Origin { get; set; }
@@ -45,10 +45,10 @@ public class Leg
 
 public class Point
 {
-    [JsonPropertyName("Name")] 
+    [JsonPropertyName("name")] 
     public  required string Name { get; set;}
 
-    [JsonPropertyName("extID")]
+    [JsonPropertyName("extId")]
     public required string Id { get;set;}
 
     [JsonPropertyName("time")]

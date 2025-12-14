@@ -28,13 +28,12 @@ public class ResRobotService
                 string json = await response.Content.ReadAsStringAsync();
                 var data = JsonSerializer.Deserialize<ResRobotTripResponse>(json);
                 
-                if (data?.Trips == null || !data.Trips.Any()) return null;
-
+                if (data?.Trips == null || data.Trips.Count == 0 ) return null;
                 //515 bus
-                var busTrip = data.Trips.FirstOrDefault(t => 
-                    t.LegList.Legs.Any(leg => leg.Name.Contains("515")));
+                // var busTrip = data.Trips.FirstOrDefault(t => 
+                //     t.LegList.Legs.Any(leg => leg.Name.Contains("515")));
 
-                return busTrip ?? data.Trips.First();
+                return data.Trips.First();
             }
         }
         catch (Exception ex)

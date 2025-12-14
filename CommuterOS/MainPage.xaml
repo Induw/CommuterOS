@@ -1,36 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CommuterOS.MainPage">
+             x:Class="CommuterOS.MainPage"
+             BackgroundColor="#0D0D0D">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Image
-                Source="dotnet_bot.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a submarine number ten" />
+<Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="25" Padding="25" VerticalOptions="Center">
 
-            <Label
-                Text="Hello, World!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+                <Border Stroke="#FFB000" StrokeThickness="2" BackgroundColor="Transparent" Padding="10">
+                    <VerticalStackLayout>
+                        <FlexLayout JustifyContent="SpaceBetween">
+                            <Label Text="[SYS.RDY] COMMUTER-OS" FontFamily="RetroFont" TextColor="#FFB000" FontSize="20"/>
+                            <Label Text="[*]" FontFamily="RetroFont" TextColor="#FFB000" FontSize="20"/>
+                        </FlexLayout>
+                        <BoxView HeightRequest="2" Color="#FFB000" Margin="0,5,0,5"/>
+                        <Label Text="{Binding CurrentTimeString}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="24"/>
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+                <Border Stroke="#FFB000" StrokeThickness="4" BackgroundColor="#1A1A00" Padding="20">
+                    <Border.StrokeShape><RoundRectangle CornerRadius="4"/></Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding ModeText}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="26" HorizontalOptions="Center"/>
+                        
+                        <Label Text="{Binding TimeToLeaveString}" 
+                               FontFamily="RetroFont" 
+                               TextColor="{Binding TimerColor}"
+                               FontSize="64" 
+                               HorizontalOptions="Center"
+                               FontAttributes="Bold">
+                            <Label.Shadow>
+                                <Shadow Brush="#FFB000" Offset="0,0" Radius="15" Opacity="0.8"/>
+                            </Label.Shadow>
+                        </Label>
 
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Fill" />
-        </VerticalStackLayout>
-    </ScrollView>
+                        <Label Text="{Binding SuggestionText}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="22" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
 
+                <Border Stroke="#FFB000" StrokeThickness="1" BackgroundColor="Transparent" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="ROUTE PARAMETERS:" FontFamily="RetroFont" TextColor="#FFB000" FontAttributes="Bold" FontSize="20"/>
+                        <Label Text="{Binding RouteStep1}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
+                        <Label Text="{Binding RouteStep2}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
+                        <Label Text="{Binding RouteStep3}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                    <Button Grid.Column="0" Text="[SWITCH]" FontFamily="RetroFont" TextColor="#FFB000" 
+                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="60" FontSize="22"
+                            Clicked="OnSwitchModeClicked"/>
+                    
+                    <Button Grid.Column="1" Text="[REFRESH]" FontFamily="RetroFont" TextColor="#FFB000" 
+                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="60" FontSize="22"
+                            Clicked="OnRefreshClicked"/>
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <GraphicsView Drawable="{StaticResource ScanlineDrawable}" InputTransparent="True" Opacity="0.3"/>
+    </Grid>
 </ContentPage>
