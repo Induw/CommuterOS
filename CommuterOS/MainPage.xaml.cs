@@ -6,11 +6,8 @@ namespace CommuterOS;
 
 public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
-    // Sigma (Upplands Väsby kn)
     private const string SITE_SIGMA = "740066762";    
-    // Stockholm Sveaplan
     private const string SITE_SVEAPLAN = "740046037"; 
-
 	private const string SITE_NORTULL = "740046132";
 
     private readonly ResRobotService _service;
@@ -20,16 +17,16 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     private bool _isWorkMode = true; 
 
 	public bool isComfort = true;
-	public bool isFast = true;
     private DateTime _targetTime = DateTime.MinValue;
     private bool _isLoading = false;
 
-    // UI Properties
+    // UI 
     public string CurrentTimeString { get; set; } = "SYSTEM READY";
     public string TimeToLeaveString { get; set; } = "--:--:--";
     public string ModeText { get; set; } = "TARGET: WORK";
     public string SuggestionText { get; set; } = "PRESS REFRESH";
-    public Color TimerColor { get; set; } = Color.FromArgb("#FFB000");
+	public string PriorityButtonText { get; set; } = "[MODE: COMFORT]";
+	public Color TimerColor { get; set; } = Color.FromArgb("#FFB000");
 
     public string RouteStep1 { get; set; } = "";
     public string RouteStep2 { get; set; } = "";
@@ -62,7 +59,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
             string from = _isWorkMode ? SITE_SIGMA : SITE_SVEAPLAN;
             string to = _isWorkMode ? SITE_NORTULL : SITE_SIGMA;
 
-            var trip = await _service.GetNextTripAsync(from, to);
+            var trip = await _service.GetNextTripAsync(from, to, isComfort);
             
             if (trip != null) ProcessTrip(trip);
             else 
@@ -145,7 +142,15 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     private void UpdateStaticUI()
     {
         ModeText = _isWorkMode ? "TARGET: WORK" : "TARGET: HOME";
+		PriorityButtonText = isComfort ? "[MODE: COMFORT]" : "[MODE: FAST]";
         OnPropertyChanged(nameof(ModeText));
+		OnPropertyChanged(nameof(PriorityButtonText));
+    }
+
+	private void OnPriorityClicked(object sender, EventArgs e)
+    {
+        isComfort = ! isComfort; 
+        UpdateStaticUI();
     }
 
     private string FormatLeg(Leg leg)

@@ -15,7 +15,7 @@ public class ResRobotService
         _client = new HttpClient();
     }
 
-    public async Task<Trip?> GetNextTripAsync(string originId, string destId)
+    public async Task<Trip?> GetNextTripAsync(string originId, string destId, bool isComfort)
     {
         try
         {
@@ -30,10 +30,15 @@ public class ResRobotService
                 
                 if (data?.Trips == null || data.Trips.Count == 0 ) return null;
                 //515 bus
-                var busTrip = data.Trips.FirstOrDefault(t => 
-                    t.LegList.Legs.Any(leg => leg.Name.Contains("515")));
-                //var busTrip = data.Trips.FirstOrDefault( t => t.LegList.Legs.Any( leg => leg.Name.Contains("515") && leg.Origin.Name.Contains("Odenplan")));
-                return busTrip;
+                if (isComfort)
+                {
+                    //515 
+                    var busTrip = data.Trips.FirstOrDefault(t => 
+                        t.LegList.Legs.Any(leg => leg.Name.Contains("515")));
+
+                    if (busTrip != null) return busTrip;
+                }
+                return data.Trips.First();
             }
         }
         catch (Exception ex)
