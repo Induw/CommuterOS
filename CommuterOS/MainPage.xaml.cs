@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using CommuterOS.Services;
 using CommuterOS.Models;
+using System.Threading.Tasks;
 
 namespace CommuterOS;
 
@@ -48,10 +49,15 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     private async void OnRefreshClicked(object sender, EventArgs e)
     {
+		await FetchTripAsync();
+    }
+
+	private async Task FetchTripAsync()
+    {
         if (_isLoading) return;
         _isLoading = true;
 
-        SuggestionText = "UPLOADING...";
+        SuggestionText = "FETCHING...";
         OnPropertyChanged(nameof(SuggestionText));
 
         try
@@ -147,11 +153,13 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 		OnPropertyChanged(nameof(PriorityButtonText));
     }
 
-	private void OnPriorityClicked(object sender, EventArgs e)
+	private async void OnPriorityClicked(object sender, EventArgs e)
     {
-        isComfort = ! isComfort; 
+        isComfort = ! isComfort;
         UpdateStaticUI();
+        await FetchTripAsync();
     }
+
 
     private string FormatLeg(Leg leg)
     {
