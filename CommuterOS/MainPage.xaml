@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CommuterOS.MainPage"
              BackgroundColor="#0D0D0D"
-             SafeAreaEdges ="None"
              Shell.NavBarIsVisible="False">
 
-<Grid SafeAreaEdges ="None">
+<Grid>
         <ScrollView>
             <VerticalStackLayout Spacing="25" Padding="25" Margin="0,20,0,0" VerticalOptions="Start">
 
@@ -42,11 +41,12 @@
                 </Border>
 
                 <Border Stroke="#FFB000" StrokeThickness="1" BackgroundColor="#1A1A00" Padding="15">
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="5" HeightRequest="150">
                         <Label Text="ROUTE :" FontFamily="RetroFont" TextColor="#FFB000" FontAttributes="Bold" FontSize="22"/>
                         <Label Text="{Binding RouteStep1}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
                         <Label Text="{Binding RouteStep2}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
                         <Label Text="{Binding RouteStep3}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
+                        <Label Text="{Binding RouteStep4}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
                     </VerticalStackLayout>
                 </Border>
 

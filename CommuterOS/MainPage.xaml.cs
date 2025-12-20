@@ -32,6 +32,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     public string RouteStep1 { get; set; } = "";
     public string RouteStep2 { get; set; } = "";
     public string RouteStep3 { get; set; } = "";
+	public string RouteStep4 {get; set;} = "";
 
     public MainPage(ResRobotService service)
     {
@@ -104,10 +105,12 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         RouteStep1 = legs.Count > 0 ? FormatLeg(legs[0]) : "";
         RouteStep2 = legs.Count > 1 ? FormatLeg(legs[1]) : "";
         RouteStep3 = legs.Count > 2 ? FormatLeg(legs[2]) : "";
+		RouteStep4 = legs.Count > 3 ? FormatLeg(legs[3]) : "";
 
         OnPropertyChanged(nameof(RouteStep1));
         OnPropertyChanged(nameof(RouteStep2));
         OnPropertyChanged(nameof(RouteStep3));
+		OnPropertyChanged(nameof(RouteStep4));
         OnPropertyChanged(nameof(SuggestionText));
     }
 
@@ -164,8 +167,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     private string FormatLeg(Leg leg)
     {
         string name = leg.Name.ToUpper()
-            .Replace("LÄNSTRAFIK - BUSS", "BUSS")
-			.Replace ("LÄNSTRAFIK - TÅG", "TÅG");
+            .Replace("LÄNSTRAFIK - BUSS", "BUS")
+			.Replace ("LÄNSTRAFIK - TÅG", "TRAIN")
+			.Replace("PROMENAD", "WALK");
             
         return $"> {name} -> {leg.Destination.Name.ToUpper()}";
     }
