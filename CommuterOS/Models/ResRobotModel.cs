@@ -41,6 +41,14 @@ public class Leg
 
     [JsonPropertyName("Destination")]
     public required Point Destination { get; set; }
+
+    [JsonPropertyName("dist")]
+    public int? Dist {get; set;}
+
+    [JsonPropertyName("type")]
+    public required string Type {get; set;}
+    public bool IsWalk() => Type == "WALK";
+
 }
 
 public class Point

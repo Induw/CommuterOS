@@ -2,6 +2,7 @@
 using CommuterOS.Services;
 using CommuterOS.Models;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace CommuterOS;
 
@@ -15,8 +16,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     private readonly IDispatcherTimer _timer;
     
     // State
-    private bool _isWorkMode = true; 
-
+    private bool _isGoToWorkMode = true; 
 	public bool isComfort = true;
     private DateTime _targetTime = DateTime.MinValue;
     private bool _isLoading = false;
@@ -28,11 +28,8 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     public string SuggestionText { get; set; } = "PRESS REFRESH";
 	public string PriorityButtonText { get; set; } = "[MODE: COMFORT]";
 	public Color TimerColor { get; set; } = Color.FromArgb("#FFB000");
+    public ObservableCollection<String> RouteSteps {get; set;} = [];
 
-    public string RouteStep1 { get; set; } = "";
-    public string RouteStep2 { get; set; } = "";
-    public string RouteStep3 { get; set; } = "";
-	public string RouteStep4 {get; set;} = "";
 
     public MainPage(ResRobotService service)
     {
@@ -63,8 +60,8 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
         try
         {
-            string from = _isWorkMode ? SITE_SIGMA : SITE_SVEAPLAN;
-            string to = _isWorkMode ? SITE_NORTULL : SITE_SIGMA;
+            string from = _isGoToWorkMode ? SITE_SIGMA : SITE_SVEAPLAN;
+            string to = _isGoToWorkMode ? SITE_NORTULL : SITE_SIGMA;
 
             var trip = await _service.GetNextTripAsync(from, to, isComfort);
             
@@ -88,42 +85,64 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     private void ProcessTrip(Trip trip)
     {
-        var departure = trip.GetDepartureTime();
+        var departureTime = trip.GetDepartureTime();
 
-        if (_isWorkMode)
+        var legs = trip.LegList.Legs;
+
+        var firstLeg = legs.First();
+
+        if (_isGoToWorkMode)
         {
-            _targetTime = departure.AddMinutes(-2);
-            SuggestionText = $"BUS DEPARTS {departure:HH:mm} (WALK 2 MIN)";
+            if (firstLeg.IsWalk())
+            {
+                _targetTime = departureTime;
+                SuggestionText = $"LEAVE HOME AT {departureTime:HH:mm}"; 
+            }
+            else
+            {
+                _targetTime = departureTime.AddMinutes(-3);
+                SuggestionText = $"BUS LEAVES AT {departureTime:HH:mm} (WALK 3 MIN)";
+            }
+            
         }
         else
         {
-            _targetTime = departure.AddMinutes(-5);
-            SuggestionText = $"DEPART WORK AT {departure:HH:mm} (WALK 5 MIN)";
+            if (firstLeg.IsWalk())
+            {
+                _targetTime = departureTime;
+                SuggestionText = $"LEAVE WORK AT {departureTime:HH:mm}"; 
+            }
+            else
+            {
+               _targetTime = departureTime.AddMinutes(-6);
+                SuggestionText = $"BUS LEAVES AT {departureTime:HH:mm} (WALK 6 MIN)"; 
+            }
+            
         }
 
-        var legs = trip.LegList.Legs;
-        RouteStep1 = legs.Count > 0 ? FormatLeg(legs[0]) : "";
-        RouteStep2 = legs.Count > 1 ? FormatLeg(legs[1]) : "";
-        RouteStep3 = legs.Count > 2 ? FormatLeg(legs[2]) : "";
-		RouteStep4 = legs.Count > 3 ? FormatLeg(legs[3]) : "";
 
-        OnPropertyChanged(nameof(RouteStep1));
-        OnPropertyChanged(nameof(RouteStep2));
-        OnPropertyChanged(nameof(RouteStep3));
-		OnPropertyChanged(nameof(RouteStep4));
+        RouteSteps.Clear();
+        if ( legs != null)
+        {
+            foreach( var leg in legs)
+            {
+                RouteSteps.Add(FormatLeg(leg));
+            }
+        }
+
         OnPropertyChanged(nameof(SuggestionText));
     }
 
     private void OnSwitchModeClicked(object sender, EventArgs e)
     {
-        _isWorkMode = !_isWorkMode;
+        _isGoToWorkMode = !_isGoToWorkMode;
         _targetTime = DateTime.MinValue;
         TimeToLeaveString = "--:--:--";
         OnPropertyChanged(nameof(TimeToLeaveString));
         UpdateStaticUI();
     }
 
-    private void OnTimerTick(object sender, EventArgs e)
+    private void OnTimerTick(object? sender, EventArgs e)
     {
         CurrentTimeString = DateTime.Now.ToString("HH:mm:ss").ToUpper();
         OnPropertyChanged(nameof(CurrentTimeString));
@@ -150,7 +169,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     private void UpdateStaticUI()
     {
-        ModeText = _isWorkMode ? "TARGET: WORK" : "TARGET: HOME";
+        ModeText = _isGoToWorkMode ? "TARGET: WORK" : "TARGET: HOME";
 		PriorityButtonText = isComfort ? "[MODE: COMFORT]" : "[MODE: FAST]";
         OnPropertyChanged(nameof(ModeText));
 		OnPropertyChanged(nameof(PriorityButtonText));
@@ -160,7 +179,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
         isComfort = ! isComfort;
         UpdateStaticUI();
-        await FetchTripAsync();
+        //await FetchTripAsync();
     }
 
 

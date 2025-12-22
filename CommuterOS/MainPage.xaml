@@ -41,12 +41,20 @@
                 </Border>
 
                 <Border Stroke="#FFB000" StrokeThickness="1" BackgroundColor="#1A1A00" Padding="15">
-                    <VerticalStackLayout Spacing="5" HeightRequest="150">
+                    <VerticalStackLayout Spacing="5" HeightRequest="150" BindableLayout.ItemsSource="{Binding RouteSteps}">
                         <Label Text="ROUTE :" FontFamily="RetroFont" TextColor="#FFB000" FontAttributes="Bold" FontSize="22"/>
-                        <Label Text="{Binding RouteStep1}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
-                        <Label Text="{Binding RouteStep2}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
-                        <Label Text="{Binding RouteStep3}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
-                        <Label Text="{Binding RouteStep4}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="18"/>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}" 
+                                    FontFamily="RetroFont" 
+                                    TextColor="#FFB000" 
+                                    FontSize="18"
+                                    LineBreakMode="WordWrap"/> 
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                        <BindableLayout.EmptyView>
+                            <Label Text="[NO DATA]" FontFamily="RetroFont" TextColor="#FFB000" Opacity="0.5" />
+                        </BindableLayout.EmptyView>
                     </VerticalStackLayout>
                 </Border>
 
@@ -55,19 +63,19 @@
                     <Button Grid.Row="0" Grid.Column="0" 
                             Text="[SWITCH]" 
                             FontFamily="RetroFont" TextColor="#FFB000" 
-                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="50" FontSize="20"
+                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="22"
                             Clicked="OnSwitchModeClicked"/>
 
                     <Button Grid.Row="0" Grid.Column="1" 
                             Text="{Binding PriorityButtonText}" 
                             FontFamily="RetroFont" TextColor="#FFB000" 
-                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="50" FontSize="20"
+                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="22"
                             Clicked="OnPriorityClicked"/>
                     
                     <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                            Text="[ EXECUTE REFRESH ]" 
+                            Text="[ REFRESH ROUTE ]" 
                             FontFamily="RetroFont" TextColor="#0D0D0D" 
-                            BackgroundColor="#FFB000" BorderColor="#FFB000" BorderWidth="2" HeightRequest="60" FontSize="24" FontAttributes="Bold"
+                            BackgroundColor="#FFB000" BorderColor="#FFB000" BorderWidth="2" HeightRequest="80" FontSize="26" FontAttributes="Bold"
                             Clicked="OnRefreshClicked"/>
                 </Grid>
 
