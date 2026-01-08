@@ -9,26 +9,31 @@
         <ScrollView>
             <VerticalStackLayout Spacing="25" Padding="25" Margin="0,20,0,0" VerticalOptions="Start">
 
-                <Border Stroke="#FFB000" StrokeThickness="2" BackgroundColor="Transparent" Padding="10">
+                <Border Stroke="#0D0D0D" StrokeThickness="2" BackgroundColor="#FFB000" Padding="10">
+                    <Border.Shadow>
+                        <Shadow Brush="#333333" Offset="4,4" Radius="0" Opacity="1.0"/>
+                    </Border.Shadow>
                     <VerticalStackLayout>
                         <FlexLayout JustifyContent="SpaceBetween">
-                            <Label Text="[SYS.RDY] COMMUTER-OS" FontFamily="RetroFont" TextColor="#FFB000" FontSize="20"/>
-                            <Label Text="[*]" FontFamily="RetroFont" TextColor="#FFB000" FontSize="20"/>
+                            <Label Text="[SYS.RDY] COMMUTER-OS" FontFamily="RetroFont" TextColor="#0D0D0D" FontSize="20"/>
+                            <Label Text="[NET:OK]" FontFamily="RetroFont" TextColor="#0D0D0D" FontSize="20"/>
                         </FlexLayout>
-                        <BoxView HeightRequest="2" Color="#FFB000" Margin="0,5,0,5"/>
-                        <Label Text="{Binding CurrentTimeString}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="28"/>
+                        <Label Text="------------------------------------------------" 
+                               TextColor="#0D0D0D" FontFamily="RetroFont" FontSize="12" 
+                               LineBreakMode="NoWrap" Margin="0,-2,0,-2"/>
+                        <Label Text="{Binding CurrentTimeString, StringFormat='[LOC.TIME] {0}'}" FontFamily="RetroFont" TextColor="#0D0D0D" FontSize="25"/>
                     </VerticalStackLayout>
                 </Border>
 
                 <Border Stroke="#FFB000" StrokeThickness="4" BackgroundColor="#1A1A00" Padding="20">
                     <Border.StrokeShape><RoundRectangle CornerRadius="4"/></Border.StrokeShape>
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="{Binding ModeText}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="26" HorizontalOptions="Center"/>
+                        <Label Text="{Binding ModeText}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="30" HorizontalOptions="Center"/>
                         
                         <Label Text="{Binding TimeToLeaveString}" 
                                FontFamily="RetroFont" 
                                TextColor="{Binding TimerColor}"
-                               FontSize="44" 
+                               FontSize="45" 
                                HorizontalOptions="Center"
                                FontAttributes="Bold">
                             <Label.Shadow>
@@ -36,24 +41,28 @@
                             </Label.Shadow>
                         </Label>
 
-                        <Label Text="{Binding SuggestionText}" FontFamily="RetroFont" TextColor="#FFB000" FontSize="22" HorizontalOptions="Center"/>
+                        <Label Text="{Binding SuggestionText}"
+                            LineBreakMode="WordWrap"
+                            MaxLines="2" 
+                            FontFamily="RetroFont"
+                            TextColor="#FFB000" FontSize="24" 
+                            HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </Border>
-
-                <Border Stroke="#FFB000" StrokeThickness="1" BackgroundColor="#1A1A00" Padding="15">
-                    <VerticalStackLayout Spacing="5" HeightRequest="150" BindableLayout.ItemsSource="{Binding RouteSteps}">
-                        <Label Text="ROUTE :" FontFamily="RetroFont" TextColor="#FFB000" FontAttributes="Bold" FontSize="22"/>
+                <Border Stroke="#FFB000" StrokeThickness="3" BackgroundColor="#1A1A00" Padding="15">
+                    <VerticalStackLayout HeightRequest="210" BindableLayout.ItemsSource="{Binding RouteSteps}" Spacing="6">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
                                 <Label Text="{Binding .}" 
                                     FontFamily="RetroFont" 
                                     TextColor="#FFB000" 
-                                    FontSize="18"
+                                    FontSize="20"
                                     LineBreakMode="WordWrap"/> 
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
+                        
                         <BindableLayout.EmptyView>
-                            <Label Text="[NO DATA]" FontFamily="RetroFont" TextColor="#FFB000" Opacity="0.5" />
+                            <Label Text="[NO DATA]" FontFamily="RetroFont" TextColor="#FFB000" Opacity="0.5" HorizontalOptions="Center" />
                         </BindableLayout.EmptyView>
                     </VerticalStackLayout>
                 </Border>
@@ -61,21 +70,24 @@
                 <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" RowSpacing="15" ColumnSpacing="15">
                     
                     <Button Grid.Row="0" Grid.Column="0" 
-                            Text="[SWITCH]" 
+                            Text="[SWITCH TARGET]" 
                             FontFamily="RetroFont" TextColor="#FFB000" 
-                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="22"
+                            CornerRadius="0"
+                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="24"
                             Clicked="OnSwitchModeClicked"/>
 
                     <Button Grid.Row="0" Grid.Column="1" 
                             Text="{Binding PriorityButtonText}" 
                             FontFamily="RetroFont" TextColor="#FFB000" 
-                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="22"
+                            CornerRadius="0"
+                            BackgroundColor="#111" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="24"
                             Clicked="OnPriorityClicked"/>
                     
                     <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                             Text="[ REFRESH ROUTE ]" 
                             FontFamily="RetroFont" TextColor="#0D0D0D" 
-                            BackgroundColor="#FFB000" BorderColor="#FFB000" BorderWidth="2" HeightRequest="80" FontSize="26" FontAttributes="Bold"
+                            CornerRadius="0"
+                            BackgroundColor="#FFB000" BorderColor="#FFB000" BorderWidth="2" HeightRequest="70" FontSize="26" FontAttributes="Bold"
                             Clicked="OnRefreshClicked"/>
                 </Grid>
 

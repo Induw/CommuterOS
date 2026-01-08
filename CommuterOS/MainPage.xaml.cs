@@ -95,13 +95,13 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         {
             if (firstLeg.IsWalk())
             {
-                _targetTime = departureTime;
-                SuggestionText = $"LEAVE HOME AT {departureTime:HH:mm}"; 
+                _targetTime = departureTime.AddMinutes(-2);
+                SuggestionText = $"LEAVE HOME AT {departureTime:HH:mm}\n(2 MIN BUFFER)"; 
             }
             else
             {
-                _targetTime = departureTime.AddMinutes(-3);
-                SuggestionText = $"BUS LEAVES AT {departureTime:HH:mm} (WALK 3 MIN)";
+                _targetTime = departureTime.AddMinutes(-4);
+                SuggestionText = $"BUS LEAVES AT {departureTime:HH:mm}\n(WALK 4 MINS TO BUS STOP)";
             }
             
         }
@@ -109,37 +109,55 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         {
             if (firstLeg.IsWalk())
             {
-                _targetTime = departureTime;
-                SuggestionText = $"LEAVE WORK AT {departureTime:HH:mm}"; 
+                _targetTime = departureTime.AddMinutes(-2);
+                SuggestionText = $"LEAVE WORK AT {departureTime:HH:mm}\n(2 MIN BUFFER)"; 
             }
             else
             {
                _targetTime = departureTime.AddMinutes(-6);
-                SuggestionText = $"BUS LEAVES AT {departureTime:HH:mm} (WALK 6 MIN)"; 
+                SuggestionText = $"BUS LEAVES AT {departureTime:HH:mm}\n(WALK 6 MINS TO BUS STOP)"; 
             }
             
         }
 
 
         RouteSteps.Clear();
-        if ( legs != null)
+        if (legs != null)
         {
-            foreach( var leg in legs)
+            for (int i = 0; i < legs.Count; i++)
             {
+                var leg = legs[i];
                 RouteSteps.Add(FormatLeg(leg));
+
+                if (i < legs.Count - 1)
+                {
+                    var nextLeg = legs[i + 1];
+
+                    if (DateTime.TryParse($"{leg.Destination.Date} {leg.Destination.Time}", out var arrivalTime) &&
+                        DateTime.TryParse($"{nextLeg.Origin.Date} {nextLeg.Origin.Time}", out var nextLegDepartureTime))
+                    {
+                        var waitTime = nextLegDepartureTime - arrivalTime;
+
+                        if (waitTime.TotalMinutes > 0)
+                        {
+                            RouteSteps.Add($"> WAIT {(int)waitTime.TotalMinutes} MIN");
+                        }
+                    }
+                }
             }
         }
 
         OnPropertyChanged(nameof(SuggestionText));
     }
 
-    private void OnSwitchModeClicked(object sender, EventArgs e)
+    private async void OnSwitchModeClicked(object sender, EventArgs e)
     {
         _isGoToWorkMode = !_isGoToWorkMode;
         _targetTime = DateTime.MinValue;
         TimeToLeaveString = "--:--:--";
         OnPropertyChanged(nameof(TimeToLeaveString));
         UpdateStaticUI();
+        await FetchTripAsync();
     }
 
     private void OnTimerTick(object? sender, EventArgs e)
@@ -151,7 +169,12 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         {
             var diff = _targetTime - DateTime.Now;
 
-            if (diff.TotalSeconds < 0)
+            if (diff.TotalSeconds > 0)
+            {                                                                                                                                                                                                  
+                TimeToLeaveString = $"[ {diff.Hours:D2} : {diff.Minutes:D2} : {diff.Seconds:D2} ]";                                                                                                                  
+                TimerColor = Color.FromArgb("#FFB000");                            
+            }  
+            else if (diff.TotalSeconds > -150)
             {
                 TimeToLeaveString = "[ DEPART NOW ]";
                 TimerColor = Colors.Red;
@@ -159,7 +182,8 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
             else
             {
                 TimeToLeaveString = $"[ {diff.Hours:D2} : {diff.Minutes:D2} : {diff.Seconds:D2} ]";
-                TimerColor = Color.FromArgb("#FFB000");
+                TimerColor = Colors.Grey;
+                TimeToLeaveString = "[ MISSED WINDOW ]";
             }
             
             OnPropertyChanged(nameof(TimeToLeaveString));
@@ -169,7 +193,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     private void UpdateStaticUI()
     {
-        ModeText = _isGoToWorkMode ? "TARGET: WORK" : "TARGET: HOME";
+        ModeText = _isGoToWorkMode ? "[ TARGET : WORK ]" : "[ TARGET : HOME ]";
 		PriorityButtonText = isComfort ? "[MODE: COMFORT]" : "[MODE: FAST]";
         OnPropertyChanged(nameof(ModeText));
 		OnPropertyChanged(nameof(PriorityButtonText));
@@ -179,17 +203,18 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
         isComfort = ! isComfort;
         UpdateStaticUI();
-        //await FetchTripAsync();
+        await FetchTripAsync();
     }
 
 
     private string FormatLeg(Leg leg)
     {
+        string time = leg.Origin.Time.Length >= 5 ? leg.Origin.Time.Substring(0, 5) : leg.Origin.Time;
         string name = leg.Name.ToUpper()
             .Replace("LÄNSTRAFIK - BUSS", "BUS")
 			.Replace ("LÄNSTRAFIK - TÅG", "TRAIN")
 			.Replace("PROMENAD", "WALK");
             
-        return $"> {name} -> {leg.Destination.Name.ToUpper()}";
+        return $"[{time}] {name} -> {leg.Destination.Name.ToUpper()}";
     }
 }
